@@ -1,0 +1,54 @@
+## Ignore Visual Studio / .NET files
+bin/
+obj/
+
+## Rider / VS Code
+.idea/
+.vscode/
+
+## User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+## ASP.NET Core
+appsettings.Development.json
+appsettings.*.json
+!appsettings.json
+
+## Secrets
+*.pfx
+*.snk
+secrets.json
+
+## Logs
+*.log
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## LibMan
+wwwroot/lib/
+
+## Node (if ever added)
+node_modules/
+
+## Coverage / test results
+TestResults/
+coverage/
+
+## JetBrains
+*.iml
+
+## Temporary files
+*.tmp
+*.temp
+*.swp
