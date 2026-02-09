@@ -1,16 +1,13 @@
-@model ManejoPresupuestos.Models.TipoCuenta
-
+@model TipoCuenta
 
 @{
-    ViewData["Title"] = "Crear Tipo Cuenta";
+    ViewData["Title"] = "Editar Tipo Cuenta";
 }
 
-<h1>Crear Tipo de Cuenta</h1>
-<h5>El tipo de cuenta serefiere a como podemos agrupar cuentas</h5>
+<h1>Editar Tipo Cuenta: @Model.Nombre</h1>
 
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-<form asp-controller="TiposCuentas" asp-action="Crear">
+<form asp-controller="TiposCuentas" asp-action="Editar">
+    <input type="hidden" asp-for="Id" />
     <div class="mb-3">
         <label asp-for="Nombre"></label>
         <input type="text" asp-for="Nombre" class="form-control" />
@@ -26,4 +23,3 @@
     @* <partial name="_ValidationScriptsPartial" /> *@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
-
