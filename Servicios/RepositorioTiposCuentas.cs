@@ -14,6 +14,7 @@ public interface IReposotorioTiposCuentas
 
     Task<IEnumerable<TipoCuenta>> Obtener(int usuarioId);
     Task<TipoCuenta> ObtenerPorId(int id, int usuarioId);
+    Task Ordenar(IEnumerable<TipoCuenta> tipoCuentasOrdenados);
 }
 
 public class RepositorioTiposCuentas: IReposotorioTiposCuentas
@@ -27,8 +28,7 @@ public class RepositorioTiposCuentas: IReposotorioTiposCuentas
     public async Task Crear(TipoCuenta tipoCuenta)
     {
         using var connection = new SqlConnection(connectionString);
-        var id = await connection.QuerySingleAsync<int>($@"INSERT INTO TiposCuentas (Nombre, UsuarioId, Orden) VALUES (@Nombre, @UsuarioId, 0);
-        SELECT SCOPE_IDENTITY();", tipoCuenta);
+        var id = await connection.QuerySingleAsync<int>("TiposCuentas_Insertar", new {usuarioId = tipoCuenta.UsuarioId, nombre = tipoCuenta.Nombre}, commandType: System.Data.CommandType.StoredProcedure);
 
         tipoCuenta.Id = id;
     }
@@ -44,7 +44,7 @@ public class RepositorioTiposCuentas: IReposotorioTiposCuentas
     public async Task<IEnumerable<TipoCuenta>> Obtener(int usuarioId)
     {
         using var connection = new SqlConnection(connectionString);
-        return await connection.QueryAsync<TipoCuenta>(@"SELECT Id, Nombre, Orden from TiposCuentas where UsuarioId = @UsuarioId", param: new {usuarioId});
+        return await connection.QueryAsync<TipoCuenta>(@"SELECT Id, Nombre, Orden from TiposCuentas where UsuarioId = @UsuarioId ORDER BY Orden", param: new {usuarioId});
     }
     
     public async Task Actualizar(TipoCuenta tipoCuenta)
@@ -63,5 +63,12 @@ public class RepositorioTiposCuentas: IReposotorioTiposCuentas
     {
         using var connection = new SqlConnection(connectionString);
         await connection.ExecuteAsync("DELETE TiposCuentas where Id = @Id", new {id});
+    }
+
+    public async Task Ordenar(IEnumerable<TipoCuenta> tipoCuentasOrdenados)
+    {
+        var query = "UPDATE TiposCuentas set Orden = @Orden Where Id = @Id";
+        using var connection = new SqlConnection(connectionString);
+        await connection.ExecuteAsync(query, tipoCuentasOrdenados);
     }
 }
