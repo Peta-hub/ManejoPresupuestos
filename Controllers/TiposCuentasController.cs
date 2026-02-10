@@ -85,6 +85,34 @@ namespace ManejoPresupuestos.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> Borrar(int id)
+        {
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
+            var tipoCuenta = await reposotorioTiposCuentas.ObtenerPorId(id, usuarioId);
+
+            if(tipoCuenta is null)
+            {
+                return RedirectToAction("No encontrado", "Home");
+            }
+
+            return View(tipoCuenta);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BorrarTipoCuenta(int id)
+        {
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
+            var tipoCuenta = await reposotorioTiposCuentas.ObtenerPorId(id, usuarioId);
+
+            if(tipoCuenta is null)
+            {
+                return RedirectToAction("No encontrado", "Home");
+            }
+
+            await reposotorioTiposCuentas.Borrar(id);
+            return RedirectToAction("Index");
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> VerificarExisteTipoCuenta(string nombre)

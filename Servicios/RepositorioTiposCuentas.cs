@@ -8,6 +8,7 @@ public interface IReposotorioTiposCuentas
 {
     Task Crear(TipoCuenta tipoCuenta);
     Task Actualizar(TipoCuenta tipoCuenta);
+    Task Borrar(int id);
 
     Task<bool> Existe(string nombre, int usuarioId);
 
@@ -56,5 +57,11 @@ public class RepositorioTiposCuentas: IReposotorioTiposCuentas
     {
         using var connection = new SqlConnection(connectionString);
         return await connection.QueryFirstOrDefaultAsync<TipoCuenta>(@"SELECT Id, Nombre, Orden from TiposCuentas where Id = @Id and UsuarioId = @UsuarioId;", new {id, usuarioId});
+    }
+
+    public async Task Borrar(int id)
+    {
+        using var connection = new SqlConnection(connectionString);
+        await connection.ExecuteAsync("DELETE TiposCuentas where Id = @Id", new {id});
     }
 }
