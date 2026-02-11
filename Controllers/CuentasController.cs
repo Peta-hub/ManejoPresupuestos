@@ -8,21 +8,50 @@ public class CuentasController: Controller
 {
     private readonly IReposotorioTiposCuentas reposotorioTiposCuentas;
     private readonly IServicioUsuarios servicioUsuarios;
+    private readonly IReposotorioCuentas reposotorioCuentas;
 
-    public CuentasController(IReposotorioTiposCuentas reposotorioTiposCuentas, IServicioUsuarios servicioUsuarios)
+    public CuentasController(IReposotorioTiposCuentas reposotorioTiposCuentas, IServicioUsuarios servicioUsuarios, IReposotorioCuentas reposotorioCuentas)
     {
         this.reposotorioTiposCuentas = reposotorioTiposCuentas;
         this.servicioUsuarios = servicioUsuarios;
+        this.reposotorioCuentas = reposotorioCuentas;
     }
 
     [HttpGet]
     public async Task<IActionResult> Crear()
     {
         var usuarioId = servicioUsuarios.ObtenerUsuarioId();
-        var tiposCuentas = await reposotorioTiposCuentas.Obtener(usuarioId);
         var modelo = new CuentaCreacionViewModel();
+        var tiposCuentas = await reposotorioTiposCuentas.Obtener(usuarioId);
         modelo.TiposCuentas = tiposCuentas.Select(x => new SelectListItem(x.Nombre, x.Id.ToString()));
 
         return View(modelo);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Crear(CuentaCreacionViewModel cuenta)
+    {
+        var usuarioId = servicioUsuarios.ObtenerUsuarioId();
+        var tipoCuenta = await reposotorioTiposCuentas.ObtenerPorId(cuenta.TipoCuentaId, usuarioId);
+
+        if (tipoCuenta is null)
+        {
+            return RedirectToAction("NoEncontrado", "Home");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            cuenta.TiposCuentas = await ObtenerTiposCuentas(usuarioId);
+            return View(cuenta);
+        }
+
+        await reposotorioCuentas.Crear(cuenta);
+        return RedirectToAction("Index");
+    }
+
+    public async Task<IEnumerable<SelectListItem>> ObtenerTiposCuentas(int usuarioId)
+    {
+        var tiposCuentas = await reposotorioTiposCuentas.Obtener(usuarioId);
+        return tiposCuentas.Select(x => new SelectListItem(x.Nombre, x.Id.ToString()));
     }
 }

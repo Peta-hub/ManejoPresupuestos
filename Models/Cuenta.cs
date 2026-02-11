@@ -14,5 +14,5 @@ public class Cuenta
     public int TipoCuentaId {get; set;}
     public decimal Balance {get; set;}
     [StringLength(maximumLength: 1000)]
-    public int Descripcion {get; set;}
+    public string Descripcion {get; set;}
 }
