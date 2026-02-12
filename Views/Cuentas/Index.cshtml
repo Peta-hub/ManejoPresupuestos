@@ -62,6 +62,20 @@
                 </span>
             </button>
         </h2>
+        <div id="@id" class="accordion-collapse show">
+        <div>
+            <ul class="list-group">
+                @foreach (var cuenta in tipoCuenta.Cuentas)
+                {
+                    var claseCuenta = ObtenerClaseBalance(cuenta.Balance);
+                    <li class="list-group-item">
+                        <span><strong>@cuenta.Nombre</strong></span>
+                        <span class="@claseCuenta">@FormatearBalance(cuenta.Balance)</span>
+                    </li>
+                }
+            </ul>
+        </div>
+        </div>
     </div>
  }
 </div>
