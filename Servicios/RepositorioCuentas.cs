@@ -11,6 +11,8 @@ public interface IReposotorioCuentas
     Task<Cuenta> ObtenerPorId(int id, int usuarioId);
 
     Task Actualizar(CuentaCreacionViewModel cuenta);
+
+    Task Borrar(int id);
 }
 public class RepositorioCuentas: IReposotorioCuentas
 {
@@ -44,5 +46,11 @@ public class RepositorioCuentas: IReposotorioCuentas
     {
         using var connection = new SqlConnection(connectionString);
         await connection.ExecuteAsync(@"Update Cuentas SET Nombre = @Nombre, Balance = @Balance, Descripcion = @Descripcion, TipoCuentaId = @TipoCuentaId WHERE Id = @Id;", cuenta);
+    }
+
+    public async Task Borrar(int id)
+    {
+        using var connection = new SqlConnection(connectionString);
+        await connection.ExecuteAsync("DELETE Cuentas WHERE Id = @Id", new {id});
     }
 }

@@ -106,6 +106,35 @@ public class CuentasController: Controller
         return RedirectToAction("Index");
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Borrar(int id)
+    {
+        var usuarioId = servicioUsuarios.ObtenerUsuarioId();
+        var cuenta = await reposotorioCuentas.ObtenerPorId(id, usuarioId);
+
+        if (cuenta is null)
+        {
+            return RedirectToAction("NoEncontrado", "Home");
+        }
+
+        return View(cuenta);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> BorrarCuenta(int id)
+    {
+        var usuarioId = servicioUsuarios.ObtenerUsuarioId();
+        var cuenta = await reposotorioCuentas.ObtenerPorId(id, usuarioId);
+
+        if (cuenta is null)
+        {
+            return RedirectToAction("NoEncontrado", "Home");
+        }
+
+        await reposotorioCuentas.Borrar(id);
+        return RedirectToAction("Index");
+    }
+
     public async Task<IEnumerable<SelectListItem>> ObtenerTiposCuentas(int usuarioId)
     {
         var tiposCuentas = await reposotorioTiposCuentas.Obtener(usuarioId);
