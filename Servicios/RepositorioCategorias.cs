@@ -1,5 +1,6 @@
 using Dapper;
 using ManejoPresupuestos.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
 namespace ManejoPresupuestos.Servicios;
@@ -8,6 +9,9 @@ public interface IRepositorioCategorias
 {
     Task Crear(Categoria categoria);
     Task<IEnumerable<Categoria>> Obtener(int usuarioId);
+    Task<Categoria> ObtenerPorId(int id, int usuarioId);
+    Task Actualizar(Categoria categoria);
+    Task Borrar(int Id);
 }
 
 public class RepositorioCategorias : IRepositorioCategorias
@@ -31,5 +35,23 @@ public class RepositorioCategorias : IRepositorioCategorias
         using var connection = new SqlConnection(connectionString);
 
         return await connection.QueryAsync<Categoria>("SELECT * FROM Categorias WHERE UsuarioId = @usuarioId", new {usuarioId});
+    }
+
+    public async Task<Categoria> ObtenerPorId(int id, int usuarioId)
+    {
+        using var connection = new SqlConnection(connectionString);
+        return await connection.QueryFirstOrDefaultAsync<Categoria>(@"Select * from Categorias where Id = @Id and UsuarioId = @UsuarioId", new {id, usuarioId});
+    }
+
+    public async Task Actualizar(Categoria categoria)
+    {
+        using var connection = new SqlConnection(connectionString);
+        await connection.ExecuteAsync(@"UPDATE Categorias set Nombre = @NOmbre, TipoOperacionId = @TipoOperacionId where id = @Id", categoria);
+    }
+
+    public async Task Borrar(int Id)
+    {
+         using var connection = new SqlConnection(connectionString);
+         await connection.ExecuteAsync("DELETE Categorias where Id = @Id", new {Id});
     }
 }
