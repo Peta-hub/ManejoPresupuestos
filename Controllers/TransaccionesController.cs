@@ -20,6 +20,11 @@ public class TransaccionesController: Controller
         this.repositorioTransacciones = repositorioTransacciones;
     }
 
+    public IActionResult Index()
+    {
+        return View();
+    }
+
     public async Task<IActionResult> Crear()
     {
         var usuarioId = servicioUsuarios.ObtenerUsuarioId();
