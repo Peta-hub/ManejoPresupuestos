@@ -10,6 +10,7 @@ public interface IRepositorioTransacciones
     Task Crear(Transaccion transaction);
     Task Actualizar(Transaccion transaccion, decimal montoAnteriror, int cuentaAnteriror);
     Task<Transaccion> ObtenerPorId(int id, int usuarioId);
+    Task Borrar(int id);
 }
 
 public class RepositorioTransacciones: IRepositorioTransacciones
@@ -42,5 +43,11 @@ public class RepositorioTransacciones: IRepositorioTransacciones
         using var connection = new SqlConnection(connectionString);
         return await connection.QueryFirstOrDefaultAsync<Transaccion>(@"select Transacciones.*, cat.TipoOperacionId from Transacciones INNER JOIN Categorias cat on cat.Id = Transacciones.CategoriaId where Transacciones.Id = @Id and Transacciones.UsuarioId = @UsuarioId",
          new {id, usuarioId});
+    }
+
+    public async Task Borrar(int id)
+    {
+        using var connection = new SqlConnection(connectionString);
+        await connection.ExecuteAsync("Transacciones_Borrar", new {id}, commandType: System.Data.CommandType.StoredProcedure);
     }
 }

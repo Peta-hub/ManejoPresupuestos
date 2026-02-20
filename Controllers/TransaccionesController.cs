@@ -92,7 +92,7 @@ public class TransaccionesController: Controller
             modelo.MontoAnterior = modelo.Monto * -1;
         }
 
-        modelo.CuentaAnterirorId = transaccion.CuentaId;
+        modelo.CuentaAnteriorId = transaccion.CuentaId;
         modelo.Categorias = await ObtenerCategorias(usuarioId, transaccion.TipoOperacionId);
         modelo.Cuentas = await ObtenerCuentas(usuarioId);
 
@@ -134,8 +134,24 @@ public class TransaccionesController: Controller
             transaccion.Monto *= -1;
         }
 
-        await repositorioTransacciones.Actualizar(transaccion, model.MontoAnterior, model.CuentaAnterirorId);
+        await repositorioTransacciones.Actualizar(transaccion, model.MontoAnterior, model.CuentaAnteriorId);
 
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Borrar(int id)
+    {
+        var usuarioId = servicioUsuarios.ObtenerUsuarioId();
+
+        var transaccion = await repositorioTransacciones.ObtenerPorId(id, usuarioId);
+
+        if (transaccion is null)
+        {
+            return RedirectToAction("NoEncontrado", "Home");
+        }
+
+        await repositorioTransacciones.Borrar(id);
         return RedirectToAction("Index");
     }
 
